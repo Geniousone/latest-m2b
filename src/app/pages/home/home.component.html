@@ -141,7 +141,7 @@
 <!-- sub total -->
 <div class="subtotal" id="to_scroll" (click)="checkout()" >
   <div class="left fot_bootn">
-    View cart
+    View cart <span>{{cart_count}}</span>
   </div>
   <div class="right fot_bootn">
   <h3><img src="images/logo.png" alt=""> <a >Cart Subtotal: <span>${{tot | number : '1.2-2'}} </span></a></h3>

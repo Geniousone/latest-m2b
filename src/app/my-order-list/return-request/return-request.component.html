@@ -19,8 +19,8 @@
             </tr>
         </thead>
         <tbody>
-            <ng-container *ngIf="orderList['cart']">
-            <ng-container *ngFor="let p of orderList['cart']; let x = index"> 
+            <ng-container *ngIf="orderList.cart">
+            <ng-container *ngFor="let p of orderList.cart; let x = index"> 
             <tr *ngIf="p.qty" >
                 <td scope="col" class="pro_gap"><img width="40" height="40" class="pro_img " src="{{p.product.path}}" />Here{{p.product.product_name}}
                                 <br>
@@ -35,7 +35,7 @@
 
                             </td>
                             <td>
-                                {{p.qty}}
+                                {{p.qty}} x {{p.sku.SKU_Price}}
                             </td>
                             <td id="qty_valuebox">
                                 <input  type="button" value="-"  (click)="updateqty(x,'m')"/>

@@ -134,6 +134,7 @@ if(this.ccurcolor == 2)
   {
     console.log("carttot");
     this.tot = 0;
+    this. cart_count = 0;
     let list = this.db.list('/cart');
     let t = 0;
     list.snapshotChanges().pipe(
@@ -148,10 +149,12 @@ if(this.ccurcolor == 2)
         { 
           if(currentValue['sku'] && currentValue['qty'])
           this.tot = this.tot+ (currentValue['sku'].SKU_Price * currentValue['qty']);
+        this.cart_count = this.cart_count +1;
         }
         });
     });
   }
+  cart_count: any;
   constructor(
     private supplierService: SupplierService,
     public authService: AuthService,

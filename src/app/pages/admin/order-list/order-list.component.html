@@ -2,7 +2,7 @@
     <div class="my_m2b_head">
         <div class="row">
             <div class="col-sm-12 category_list">
-                <h2>Orders List</h2>
+                <h2>Orders List {{isSupplierProduct}}</h2>
             </div>
             
         </div>
@@ -21,28 +21,27 @@
             </thead>
             <tbody>
                 <ng-container *ngIf="isSupplierProduct">
+
                     <tr *ngFor="let order of orderList; let i = index;">
                         <td scope="row">{{i+1}}</td>
                         <td>
-                            <div *ngFor="let item of order.productDetail">
-                                <h5>{{item.productName}}</h5>
+                            <div *ngFor="let item of order.cart">
+                                <h5>{{item.product.product_name}}</h5>
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th scope="col">SKU Name</th>
                                             <th scope="col">Price</th>
                                             <th scope="col">Quantity</th>
-                                            <th scope="col">{{item.col1Title}}</th>
-                                            <th scope="col">{{item.col2Title}}</th>
+                                            <th scope="col">Attribute</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let product of item.productSKU; let i = index;">
-                                            <td scope="col">{{product.SKU_Name}}</td>
-                                            <td scope="col">$ {{product.SKU_Price}}</td>
-                                            <td scope="col">{{product.quantity}}</td>
-                                            <td scope="col">{{product.col1Value? product.col1Value : 'None' }}</td>
-                                            <td scope="col">{{product.col2Value? product.col2Value : 'None' }}</td>
+                                        <tr >
+                                            <td scope="col">{{item.sku.SKU_Name}}</td>
+                                            <td scope="col">$ {{item.sku.SKU_Price}}</td>
+                                            <td scope="col">{{item.qty}}</td>
+                                            <td scope="col">{{item.astr}}</td>
                                         </tr>
 
                                     </tbody>
@@ -50,48 +49,49 @@
                             </div>
 
                         </td>
-                        <td>$ {{order.totalPrice | number : '1.2-2'}}
+                        <td>$ {{order.tot | number : '1.2-2'}}
                         </td>
 
                     </tr>
                 </ng-container>
                 <!-- for supplier  -->
                 <ng-container *ngIf="!isSupplierProduct">
-                    <tr *ngFor="let order of supplierOrderList; let i = index;">
+
+                    <tr *ngFor="let order of orderList; let i = index;">
                         <td scope="row">{{i+1}}</td>
                         <td>
-                            <div *ngFor="let item of order.productDetail">
-                                <h5>{{item.productName}}</h5>
+                            <div *ngFor="let item of order.cart">
+                                <h5>{{item.product.product_name}}</h5>
                                 <table class="table table-hover">
                                     <thead>
                                         <tr>
                                             <th scope="col">SKU Name</th>
                                             <th scope="col">Price</th>
                                             <th scope="col">Quantity</th>
-                                            <th scope="col">{{item.col1Title}}</th>
-                                            <th scope="col">{{item.col2Title}}</th>
+                                            <th scope="col">Attribute</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let product of item.productSKU; let i = index;">
-                                            <td scope="col">{{product.SKU_Name}}</td>
-                                            <td scope="col">$ {{product.SKU_Price}}</td>
-                                            <td scope="col">{{product.quantity}}</td>
-                                            <td scope="col">{{product.col1Value? product.col1Value : 'None' }}</td>
-                                            <td scope="col">{{product.col2Value? product.col2Value : 'None' }}</td>
+                                        <tr >
+                                            <td scope="col">{{item.sku.SKU_Name}}</td>
+                                            <td scope="col">$ {{item.sku.SKU_Price}}</td>
+                                            <td scope="col">{{item.qty}}</td>
+                                            <td scope="col">{{item.astr}}</td>
                                         </tr>
+
                                     </tbody>
                                 </table>
                             </div>
-                        </td>
 
-                        <td>$ {{order.totalPrice | number : '1.2-2'}}</td>
+                        </td>
+                        <td>$ {{order.tot | number : '1.2-2'}}
+                        </td>
                         <td>
                             <ul style="list-style: none; padding-left: 0px;">
-                                <li><strong>Name:</strong> {{order.userName}}</li>
-                                <li><strong>Email:</strong> {{order.userEmail}}</li>
-                                <li><strong>Contact No:</strong> {{order.userPhone}}</li>
-                                <li><strong>Delivery Address:</strong> {{order.deliverAddress}}</li>
+                                <li><strong>Name:</strong> {{order.saddress.fname}} {{order.saddress.lname}}</li>
+                                <li><strong>Email:</strong> {{order.saddress.email}}</li>
+                                <li><strong>Contact No:</strong> {{order.saddress.phone}}</li>
+                                <li><strong>Delivery Address:</strong> {{order.saddress.address}}</li>
                             </ul>
                         </td>
                         <td>
@@ -108,6 +108,7 @@
                             <a class="btn btn-outline-secondary " (click)="onSave(i)" *ngIf="!isSave[i]">
                 Save</a>
                         </td>
+
                     </tr>
                 </ng-container>
             </tbody>

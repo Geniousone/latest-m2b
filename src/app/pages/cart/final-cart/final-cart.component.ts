@@ -313,8 +313,6 @@ const t  = dd + '/' + mm + '/' + yyyy;
       if (this.credit < this.tot) {
         this.cerror = 'Your have insufecient balence!';
         return 0;
-        error = 1;
-        alert(this.cerror);
 
       } 
       else 

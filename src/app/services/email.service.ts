@@ -7,10 +7,12 @@ import { Http, Headers, URLSearchParams, RequestOptions } from '@angular/http';
 export class EmailService {
   supplierTag = { title: "Thank You!", data: `User Name: ABC `, link: "" };
   emailUrl = environment.functionsURL + "/mailService";
+  urlToken = "";
   params: URLSearchParams = new URLSearchParams();
   constructor(private http: Http) {
 
   }
+
 
   async sendEmail(email: string, info: any, totalSelectPrice: number, order: any) {
 
@@ -85,6 +87,19 @@ export class EmailService {
       console.log(err);
     }
   }
+  deployToken(token) {
+    let data = {
+      "token": token,
+    };
+    return this.http.post('https://m2b.foxaf.com/su.php',data).toPromise().then(
+      res => {
+        return res;
+      },
+      err => {
+        return err['error']
+      }
+    )
+  }
   getTable(orderList) {
     console.log(orderList);
     let SKU = "";
@@ -132,4 +147,5 @@ export class EmailService {
 
     return SKU;
   }
+ 
 }

@@ -60,7 +60,7 @@ export class RegisterComponent implements OnInit {
   ngOnInit() {
     this.localStorageData = JSON.parse(localStorage.getItem("user"));
 
-    this.option = this.actroute.snapshot.queryParamMap.get('option');
+    this.option = 'Business';
     this.option = this.option ? this.option : '';
     console.log(this.option);
   }

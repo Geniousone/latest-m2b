@@ -1,12 +1,5 @@
 // qty
 
-$(document).on('click', '.qty-plus_pos', function () {
-   $(this).prev().val(+$(this).prev().val() + 1);
-});
-$(document).on('click', '.qty-minus_pos', function () {
-   if ($(this).next().val() > 0) $(this).next().val(+$(this).next().val() - 1);
-});
-
 
 $(document).ready(function(){
 	$('ul.tabs li').click(function(){

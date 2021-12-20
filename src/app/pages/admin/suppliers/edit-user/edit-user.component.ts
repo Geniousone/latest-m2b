@@ -62,6 +62,7 @@ export class EditUserComponent implements OnInit {
   getUserInfo(id) {
 
     if (id !== null) {
+
       this.supplierSer.GetUser(id).valueChanges().subscribe(data => {
 
         console.log(data);

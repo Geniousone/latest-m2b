@@ -142,10 +142,12 @@ export class LoginComponent implements OnInit {
         ).subscribe(users => {
           console.log("Login user here");
           localStorage.setItem("login", users[0].key);
+          console.log(localStorage.getItem('login'));
           this.users = users;
           this.activeUserService.setValue(this.users[0].option);
           this.ress = this.GetOption(this.users[0].option);
           localStorage.setItem("op", this.ress);
+          // alert(users[0].option);
           this.checkOption(this.users[0].option);
 
           //check for Business and Supplier and check email varification if not then send email varification mail to user

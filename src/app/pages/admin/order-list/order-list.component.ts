@@ -163,13 +163,12 @@ if((this.supplierOrderList[index].trackingNo == '' || this.supplierOrderList[ind
       users.forEach(user =>{
         this.user = user;
       })
-      /*if (this.user.option == 'Supplier') {
+      if (this.user.option == 'Supplier') {
         this.isSupplierProduct = false;
       } else {
         this.isSupplierProduct = true;
       }
-    });*/
-    this.isSupplierProduct =  0;
+    });
 
   }
 }

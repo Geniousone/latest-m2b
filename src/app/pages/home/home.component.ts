@@ -36,26 +36,25 @@ export class HomeComponent implements OnInit {
     col1Title: "",
     col2Title: ""
   }
-  cart_tot(p)
+  cart_tot(p,index = -1)
   {
-    // console.log(p); 
+     
+    // console.log(); 
+     
     let tot = 0;
-    let list = this.db.list('/cart');
-    let t = 0;
-    list.snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    ).subscribe(cart => {
-      let luid  = localStorage.getItem('login');
-      this.tot = 0;
-      cart.forEach((currentValue, index) => {
-        if( currentValue['pid'] && currentValue['pid'] == p && currentValue['uid'] && currentValue['uid'] == luid)
+    this.cart.forEach((currentValue, index) => {
+        if( currentValue['pid'] && currentValue['pid'] == p && currentValue['uid'] && currentValue['uid'] == this.userId)
         { 
+          console.log(p);
           tot = tot+  currentValue['qty'];
         }
         });
-    });
+    if(index != -1)
+    {
+      this.products[index]['cat_count'] = tot;
+      return this.products[index]['cat_count'];
+      // alert(this.products[index]['cat_count']);
+    }
     return tot;
   }
   qtychange(p)
@@ -80,11 +79,6 @@ export class HomeComponent implements OnInit {
   select_scat(key)
   {
     this.selectedScat = key;
-    
-    setTimeout(()=>{                           //<<<---using ()=> syntax
-       
-      // alert();
- }, 1000);
                         
     
     // alsert(key);
@@ -165,7 +159,7 @@ if(this.ccurcolor == 2)
     private toastrService: ToastrService,
   ) { 
      this.varImg = 0;
-    this.userId = localStorage.getItem('login');
+    
     this.selectedCat = 0;
     let list = this.db.list('/categories');
     list.snapshotChanges().pipe(
@@ -218,7 +212,7 @@ if(this.ccurcolor == 2)
           currentValue['price'] = 0;
           currentValue['min'] = this.set_low(index);
           currentValue['selectedAttr'] = 0;
-          
+          this.products[index]['cat_count'] = this.cart_tot(currentValue['key']);
           this.products[index] = currentValue;
           this.oproducts[index] = currentValue;
         });
@@ -629,6 +623,7 @@ else
         }
       });
 }
+this.cart_tot(this.products[p].key);
 }
 objtokey(obj)
 {
@@ -679,6 +674,8 @@ comparaattr(arr1,arr2,type = 0)
 }
 
   ngOnInit() {
+    this.userId = localStorage.getItem('login');
+    // alert(this.userId);
 
 
     if (this.LSRole === Role.Supplier) {

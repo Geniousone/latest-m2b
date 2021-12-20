@@ -715,7 +715,7 @@
             <div class="ship_address radio_box" *ngFor="let item of shipping_methods;let i = index;">
 
               <label *ngIf="i != smethod"><input type="radio"(change)="shipping();" name="smethod" value="{{i}}"  [(ngModel)]="smethod"  /> {{item.name}} <span>${{item.price}}</span></label>
-              <label *ngIf="i ==  smethod"><input type="radio"(change)="shipping();" name="smethod" value="{{i}}"  [(ngModel)]="smethod" checked="checked" /> Here {{item.name}} <span>${{item.price}} </span></label>
+              <label *ngIf="i ==  smethod"><input type="radio"(change)="shipping();" name="smethod" value="{{i}}"  [(ngModel)]="smethod" checked="checked" /> {{item.name}} <span>${{item.price}} </span></label>
             </div>
             <div class="ship_address">
             <!-- <label><input type="checkbox" name=""> Ship to the same address</label> -->
@@ -728,14 +728,17 @@
           <div   *ngIf="acord.acc3 == 1" style="display:block;">
           <div class="ship_address radio_box" id="radiobtn">
               <label><input type="radio" [(ngModel)]="pmethod" (change)="pchange()" value="ccard" name="pmethod"> Credit Card <!-- <span><img src="images/mastercard.jpg" alt=""> <img src="images/visa.jpg" alt=""></span> --></label>
-              <label><input type="radio" [(ngModel)]="pmethod" (change)="pchange()" value= "credit" name="pmethod">  M2B Credit <!-- <span><img src="images/mastercard.jpg" alt=""> <img src="images/visa.jpg" alt=""></span> --></label>
+              <label><input type="radio" [(ngModel)]="pmethod" (change)="pchange()" value= "credit" name="pmethod"> M2B Credit  <span  *ngIf ="ucredit < tot">({{credit | number : '1.2-2'}})</span><span *ngIf ="ucredit > tot">({{tot | number : '1.2-2'}})</span> <!-- <span><img src="images/mastercard.jpg" alt=""> <img src="images/visa.jpg" alt=""></span> --></label>
             </div>
           <div class="row credit_error" *ngIf="pmethod == 'credit'">
             <span style="color:red;">{{cerror}}</span>
-            <button *ngIf="credit > 0">Apply Credit</button>
+            <button *ngIf="credit > 0 && !credit_pay" (click)="applyCredit();">Apply Credit</button>
           </div>
           <div id="odiv" *ngIf="pmethod == 'ccard'">
           <form id="card_form">
+            <ul id="card_error">
+              {{card_error}}
+            </ul>
             <label for="sq-card-number">Card Number:</label>
               <div id="sq-card-number"></div>
               <label for="sq-cvv">CVV:</label>
@@ -803,9 +806,18 @@
               <td >Shipping Fee:</td>
               <td>${{samount | number : '1.2-2'}}</td>
             </tr>
+            
             <tr>
               <td >Grand Total:</td>
               <td>${{tot | number : '1.2-2'}}</td>
+            </tr>
+            <tr *ngIf="credit_pay">
+              <td >Credit Applied:</td>
+              <td>${{credit_pay | number : '1.2-2'}}</td>
+            </tr>
+            <tr *ngIf="credit_pay && (tot-credit_pay)">
+              <td >Remaing to Pay:</td>
+              <td>${{remaing_pay | number : '1.2-2'}}</td>
             </tr>
           </tbody>
         </table>

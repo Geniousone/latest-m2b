@@ -35,6 +35,7 @@
 
                             </td>
                             <td>
+
                                 {{p.qty}} x {{p.sku.SKU_Price}}
                             </td>
                             <td id="qty_valuebox">
@@ -42,7 +43,7 @@
                                 <input type="text" value="{{p.rqty}}" name=""/>
                                 <input type="button" value="+" (click)="updateqty(x,'p')" />
                               </td>
-                <td>${{p.qty * p.sku.SKU_Price}}</td>
+                <td>${{p.qty * p.sku.SKU_Price | number : '1.2-2'}}</td>
             </tr>
         </ng-container>
         </ng-container>

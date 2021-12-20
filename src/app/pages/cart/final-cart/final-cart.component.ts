@@ -41,10 +41,11 @@ export class FinalCartComponent implements OnInit, OnDestroy, AfterViewInit{
     if (this.pmethod === 'credit') {
       // alert(this.credit);
       if (this.credit < this.tot) {
-        this.cerror = 'Your have insufecient balence!';
+        // this.cerror = 'Your have insufecient balence!';
 
       }
     }
+    this.ngOnInit();
 
   }
   show_accor(i) {
@@ -177,14 +178,17 @@ export class FinalCartComponent implements OnInit, OnDestroy, AfterViewInit{
     this.getUserByOption();
 
   }
+  card_error : any;
   checkout() {
-        if (this.pmethod == 'ccard') {
+        if (this.pmethod == 'ccard' || this.remaing_pay) {
         if((<HTMLInputElement>document.getElementById('card-nonce')).value)
         {
+
           let r = this.getdata();
       r.subscribe(data => {
         if(data['payment'])
         {
+
           let su_data = data;
           /*-----vard checkout----*/
           let remain = 0;
@@ -197,17 +201,7 @@ export class FinalCartComponent implements OnInit, OnDestroy, AfterViewInit{
      }
     //apply validation
     let error = 0;
-    if (this.pmethod == 'credit') {
-      // alert(this.credit);
-      if (this.credit < this.tot) {
-        this.cerror = 'Your have insufecient balence!';
-        error = 1;
-        alert(this.cerror);
-
-      } else {
-        remain = this.credit - this.tot;
-      }
-    }
+    
     for (const key in this.address) {
     const value = this.address[key];
     if (!value) {
@@ -237,6 +231,7 @@ const t  = dd + '/' + mm + '/' + yyyy;
       'date': t,
       'uid': this.userId,
       'tot': this.tot,
+      'credit_pay': this.credit_pay,
       'cart': lcart,
       'address': this.address,
       'saddress': this.saddress,
@@ -256,8 +251,8 @@ const t  = dd + '/' + mm + '/' + yyyy;
            const r = this.db.list('/users').update(this.userId, this.user);
            console.log(r);
      }
-     if (remain) {
-      this.user.credit = remain;
+     if (this.remaing_pay) {
+      this.user.credit = 0;
       const r = this.db.list('/users').update(this.userId, this.user);
            console.log('credit update');
            console.log(r);
@@ -443,9 +438,15 @@ const t  = dd + '/' + mm + '/' + yyyy;
   orderList: any;
   su_token: any;
   getdata() {
-        return this.http.get('https://m2b.foxaf.com/su.php?token='+(<HTMLInputElement>document.getElementById('card-nonce')).value+'&amount='+this.tot);
+    let amount = this.tot;
+    if(this.remaing_pay)
+    {
+      amount = this.remaing_pay;
+    }
+        return this.http.get('https://m2b.foxaf.com/su.php?token='+(<HTMLInputElement>document.getElementById('card-nonce')).value+'&amount='+amount);
     }
     ngOnInit() {
+        this.card_error = '';
         this.orderList = JSON.parse(localStorage.getItem('orderData'));
         this.calculateTotal();
         // Set the application ID
@@ -493,7 +494,7 @@ const t  = dd + '/' + mm + '/' + yyyy;
                  */
                 methodsSupported: function (methods: any) {
 
-                    const applePayBtn = document.getElementById('sq-apple-pay');
+                    const applePayBtn = document.getElementById('sq-apple-pay'); 
                     const applePayLabel = document.getElementById('sq-apple-pay-label');
                     const masterpassBtn = document.getElementById('sq-masterpass');
                     const masterpassLabel = document.getElementById('sq-masterpass-label');
@@ -561,9 +562,16 @@ const t  = dd + '/' + mm + '/' + yyyy;
                     if (errors) {
                         // Log errors from nonce generation to the Javascript console
                         console.log('Encountered errors:');
+                        let errors1 = [];
+                        let error_str = ''; 
                         errors.forEach(function(error: any) {
-                            console.log('  ' + error.message);
+                            // errors1.push(error.message);
+                            error_str = error_str +'<li>'+error.message+'</li>';
                         });
+                        console.log(error_str);
+                        // this.card_error = error_str;
+                        (<HTMLInputElement>document.getElementById('card_error')).innerHTML = error_str;
+                        //
 
                         return;
                     }
@@ -659,10 +667,29 @@ const t  = dd + '/' + mm + '/' + yyyy;
     // alert(this.samount);
     this.calculateTotal();
   }
+  credit_pay: any;
+  remaing_pay: any;
+  applyCredit(){
+
+    //alert(this.ucredit);
+    if(this.ucredit < this.tot)
+    {
+      this.credit_pay  = this.ucredit;
+      this.remaing_pay  = this.tot - this.credit_pay;
+      this.pmethod = 'ccard';
+      this.ngOnInit();
+    }
+    else
+    {
+      this.credit_pay  = this.tot;
+      this.remaing_pay  = this.tot - this.credit_pay;
+    }
+  }
   ngOnDestroy() {
 
   }
   credit: any;
+  ucredit: any;
   user: any;
   getUserByOption() {
     this.ownEmail = JSON.parse(localStorage.getItem('user'));
@@ -682,6 +709,7 @@ const t  = dd + '/' + mm + '/' + yyyy;
         }
         this.address.email = users[0].email.toString();
         this.address['phone'] = users[0].phoneNo.toString();
+        this.ucredit = parseInt(users[0].credit.toString());
         this.credit = users[0].credit.toString();
 
       });

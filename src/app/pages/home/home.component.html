@@ -79,7 +79,8 @@
       <div class="col-sm-3 product_thumbox"  *ngIf = " product.cat_id == selectedScat ">
         <div class="addto_cart_box">
           <h4>{{product.product_name}} </h4>
-          <span>{{cart_tot(product.key)}}</span>
+          <b style="display: none;">{{ cart_tot(product.key,pi) }}</b>
+          <span *ngIf="product.cat_count">{{product.cat_count}}</span>
           <img src="{{ product.path }}" alt="">
           <div class="info_box" id="selected_variation">
             <ng-container *ngIf="product.attributes">

@@ -95,6 +95,7 @@
         <p *ngIf="order.saddress.postcode"><b>Postal Code:</b> <span>{{order.saddress.postcode}}</span></p>
         <p *ngIf="order.saddress.country"><b>Country:</b> <span>{{order.saddress.country}}</span></p>
         <p *ngIf="order.saddress.address"><b>Deliver Address:</b> <span>{{order.saddress.address}}</span></p>
+        <p *ngIf="order.credit_pay"><b>Credit Pay:</b> <span>${{order.credit_pay | number : '1.2-2'}}</span></p>
         
       </div>
                                         

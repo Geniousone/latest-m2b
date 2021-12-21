@@ -37,6 +37,13 @@ export class CategoryService {
     return this.categoriesListByoption;
   }
   GetCategory(id: string) {
+    /*let cat = this.db.list('/categories', {
+    query: {
+        key: id
+    } 
+});
+    console.log(cat);*/
+
     const itemPath = `${this.dbPath}/${id}`;
     this.categoryRef = this.db.object(itemPath);
     return this.categoryRef;

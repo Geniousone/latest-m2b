@@ -1,30 +1,36 @@
-<app-header></app-header>
-<div class="container">
-    <form class="form-signin" [formGroup]="addCategoryForm">
 
+<div class="container">
+    <form class="form-signin" >
+ 
         <h2 class="form-signin-heading">Add Category</h2>
         <div class="form-group">
             <label for="catName">Category Name</label>
-            <input type="text" id="catName" class="form-control" formControlName="catName" placeholder="Enter Name">
+            <input type="text" id="catName" class="form-control" [(ngModel)]="param.catName" placeholder="Enter Name"/>
         </div>
         <div class="form-group">
-            <label for="status">Category Status</label>
-            <input type="text" id="status" class="form-control" formControlName="status" placeholder="Enter Status">
-        </div>
-        <div class="form-group">
-            <label for="catIcon">Select Category Icon</label>
-
-            <input type="text" id="catIcon" class="form-control" formControlName="catIcon" placeholder="Select Category Icon" required>
+            <label for="catIcon">Select Brand</label>
+            <select  class="form-control" id="brand">
+                <option *ngFor="let item of brands; let i = index" value="{{item.key}}">{{item.name}}</option> 
+            </select>
         </div>
 
+        <div class="form-group" name="parent">
+            <label for="uId">Parent category</label> 
+            <select  class="form-control" id="parent">
+                <option value="0">Parent category</option>
+                <option *ngFor="let item of parents; let i = index" value="{{item.key}}">{{item.catName}}</option>
+            </select>
+        </div>
+
         <div class="form-group">
-            <label for="uId">Select User</label>
-            <input type="text" id="uId" class="form-control" formControlName="userId" placeholder="Select User">
+            <label for="catIcon">Category Image(url)</label>
+
+            <input type="text" class="form-control" id="path" placeholder="Category Image Url" required>
         </div>
 
 
         <div class="borderbtn">
-            <button class="btn btn-lg btn-primary btn-block" (click)="tryAddCategory(addCategoryForm.value)">Save</button>
+            <button class="btn btn-lg btn-primary btn-block" (click)="tryAddCategory( )">Save</button>
         </div>
 
     </form>

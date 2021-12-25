@@ -1,78 +1,197 @@
+<div class="add_product_page">
+<ul class="tabs_">
+   <li class="tab-link_" [ngClass]="{'current_': tab === 'tab-1'}" data-tab="tab-1" (click)="tab = 'tab-1'">General Information</li>
+   <li class="tab-link_" data-tab="tab-2" [ngClass]="{'current_': tab === 'tab-2'}" (click)="tab = 'tab-2'">Attribute</li>
+   <li class="tab-link_" data-tab="tab-3"[ngClass]="{'current_': tab === 'tab-3'}"  (click)="tab = 'tab-3'">Variation</li>
+</ul>
+<div id="tab-1" class="tab-content_" [ngClass]="{'current_': tab === 'tab-1'}">
+   <div class="general-info">
+      <h2 class="form-signin-heading">Add Product</h2>
+      <div class="row">
+          <div class="col-sm-3 sidegapp_none">
+              <div class="form-group">
+                 <label for="proName">Product SKU</label>
+                 <input type="text" id="main_sku" class="form-control" placeholder="Enter SKU">
+              </div>
+          </div>
+          <div class="col-sm-9 sidegapp_none">
+              <div class="form-group">
+                 <label for="proName">Product Name</label>
+                 <input type="text" id="product_name" class="form-control" placeholder="Enter Name">
+              </div>
+          </div>
+      </div>
 
-<div class="container">
-    <form class="form-signin" [formGroup]="addProductForm">
+      <div class="row">
+          <div class="col-sm-4 sidegapp_none">
+              <div class="form-group">
+                 <label for="catIcon">Select Brand</label>
+                 <select  class="form-control" id="brand" (change)="brand_change()" [(ngModel)]="brand">
+                 <option value="0">Select brand</option>
+                 <option *ngFor="let item of brands; let i = index" value="{{item.key}}">{{item.name}}</option>
+                 </select>
+              </div>
+          </div>
+          <div class="col-sm-4 sidegapp_none">
+              <div class="form-group" name="parent">
+                 <label for="uId">select category</label> 
+                 <select  class="form-control" id="parent" (change) ="change_cat()">
+                    <option value="0">Parent category</option>
+                    <ng-container *ngFor="let item of categories; let i = index">
+                       <option  *ngIf="item.parent == 0 && item.brand == brand" value="{{item.key}}">{{item.catName}}</option>
+                    </ng-container>
+                 </select>
+              </div>
+          </div>
+          <div class="col-sm-4 sidegapp_none">
+              <div class="form-group" name="parent">
+                 <label for="uId">select Service type</label>
+                 <select  class="form-control" id="cat_id" (change) ="change_cat()">
+                    <option value="0">Service type</option>
+                    <ng-container *ngFor="let item of categories; let i = index">
+                       <option  *ngIf="item.parent == parent" value="{{item.key}}">{{item.catName}}</option>
+                    </ng-container>
+                 </select>
+              </div>
+          </div>
+          
+      </div>
+      
+      
+      
+      
+      
+   </div>
+</div>
+<div id="tab-2" class="tab-content_ "  [ngClass]="{'current_': tab === 'tab-2'}">
+   <div class="add-attritube">
+       <div class="form-group">
+          <input id="attr_name" class="form-control" type="text" name=""/>
+          <button (click)="add_attr()">Add attribute</button>
+          <div class="attrsesction">
+              <ul>
+                <ng-container *ngFor="let item of attributes; let i = index">
+                 <li *ngIf="item">
+                    <div class="row">
+                        <div class="col-sm-1 titlebox">
+                            <label>Title</label>
+                        </div>
+                        <div class="col-sm-2 sidegapp_none">
+                            <input class="form-control" type="text" (keyup)="ch_an(i)" [attr.id]="'att__name' + i" value="{{item.name}}" name="">
+                        </div>
+                        
+                        <div class="col-sm-1 titlebox">
+                            <label>Values </label> 
+                        </div>
+                        <div class="col-sm-2 sidegapp_none">
+                            <input class="form-control" type="text"  name=""value=""[attr.id]="'att__val' + i">
+                              <ul class="nestedbox">
+                                  <ng-container *ngFor="let val of item.values; let vi = index">
+                                  <li *ngIf="val">
+                                     <input class="form-control" type="text" [attr.id]="'att__val' + i+'_'+vi" (keyup)="value_change(i, vi)" value="{{val}}" name=""><button (click)="dval(i,vi)">Delete</button>
+                                  </li>
+                                  </ng-container>
+                               </ul>  
+                        </div>
+                        <div class="col-sm-3 ">
+                            
+                        </div>
+                        <div class="col-sm-1 add_value_btn">
+                            <button (click)="add_val(i)">Add value</button>
+                        </div>
+                        <div class="col-sm-2 add_value_btn">
+                            <button style="background: #ed2727;" (click)="del_attr(i)">Delete attribute {{i}}</button>
+                        </div>
 
-        <h2 class="form-signin-heading">Add Product</h2>
-        <div class="form-group">
-            <label for="proName">Product Name</label>
-            <input type="text" id="proName" class="form-control" formControlName="name" placeholder="Enter Name">
-        </div>
-        <div class="form-group">
-            <label for="image">Image Url</label>
-            <input id="image" class="form-control" formControlName="product_image_url" type="file">
-        </div>
+                        
+                    </div>
 
-        <div class="form-group">
-            <label for="Status">Status</label>
-            <select class="btn btn-secondary dropdown-toggle form-control" style="background-color: #F78C3C" formControlName="status">
-        <option *ngFor="let item of status" [value]="item.value">{{item.name}}</option>
-      </select>
-        </div>
+                    
+                 </li>
+                 </ng-container>
+              </ul>
+           </div>
+       </div>
 
-        <div class="form-group">
-            <label for="color">Product Color</label>
+   </div>
+</div>
+<div id="tab-3" class="tab-content_"  [ngClass]="{'current_': tab === 'tab-3'}">
+    <div class="product-variation">
 
-            <input type="color" id="color" class="form-control" formControlName="color" placeholder="Enter Color" required>
-        </div>
-
-        <div class="form-group dropdown  mb-4">
-            <label>Select Category </label>
-            <select class="btn btn-secondary dropdown-toggle form-control" style="background-color: #F78C3C" formControlName="catId">
-        <option *ngFor="let category of categories" [value]="category.key">{{category.catName}}</option>
-      </select>
-        </div>
-
-        <div class="form-group dropdown  mb-4" *ngIf="isSupplierProduct">
-            <label for="userId">Assign Supplier</label>
-            <select class="btn btn-secondary dropdown-toggle form-control" style="background-color: #F78C3C" formControlName="userEmail">
-        <option *ngFor="let user of users" [value]="user.email">{{user.name}}</option>
-      </select>
-        </div>
-        <div class="form-group">
-            <label for="col_name1">Title 1</label>
-            <input type="text" id="col_name1" class="form-control" formControlName="col_name1" placeholder="Enter Title 1">
-        </div>
-        <div class="form-group">
-            <label for="col_name2">Title 2</label>
-            <input type="text" id="col_name2" class="form-control" formControlName="col_name2" placeholder="Enter Title 2">
-        </div>
-        <i class="fa fa-plus add_icon" (click)="addSKU()"></i>
-        <div class="add_cat" formArrayName="productSKU" *ngFor="let item of addProductForm.get('productSKU')['controls']; let i=index ">
-            <i class="fa fa-times add_icon" (click)="removeCat(i)" *ngIf="addProductForm.get('productSKU').length > 1 "></i>
-            <div [formGroupName]="i">
-                <div class="form-group">
-                    <label [attr.for]="'SKU_Name'+i">Product SKU Name</label>
-                    <input type="text" [id]="'SKU_Name'+i" class="form-control" formControlName="SKU_Name" placeholder="Enter Product SKU Name">
+   
+   
+   <div class="add_cat" *ngFor="let sku_item of sku; let skui=index ">
+    <div class="row" *ngIf="sku_item">
+            
+                    <div class="col-sm-2 sidegapp_none">
+                        <div class="form-group">
+                            <label [attr.for]="'SKU_Name'+skui">SKU Name</label>
+                            <input type="text" [id]="'SKU_Name'+skui" value="{{sku_item.SKU_Name}}" (keyup)="sku_change(skui)" class="form-control" placeholder="Enter Product SKU Name">
+                         </div>
+                    </div>
+                    <div class="col-sm-2 sidegapp_none">
+                        <div class="form-group">
+                            <label [attr.for]="'SKU_Price'+skui">SKU Price</label>
+                            <input type="number" [id]="'SKU_Price'+skui" class="form-control" (keyup)="sku_change(skui)" value="{{sku_item.SKU_Price}}" placeholder="Enter Product SKU Price">
+                         </div>
+                    </div>
+                    <div class="col-sm-2 sidegapp_none">
+                        <div class="form-group">
+                            <label [attr.for]="'SKU_Quantity'+skui">SKU Quantity</label>
+                            <input type="number"  (keyup)="sku_change(skui)" [id]="'SKU_Quantity'+skui" class="form-control" value="{{sku_item.SKU_Quantity}}" placeholder="Enter Product SKU Quantity">
+                         </div>
+                    </div>
+                    
+                    <div class="col-sm-2 sidegapp_none">
+                        <div class="form-group">
+                            <label [attr.for]="'File'+skui">SKU Image</label>
+                            <input type="hidden" [id]="'SKU_Image'+skui" (keyup)="sku_change(skui)" name="">
+                            <input style="padding: 5px 7px 0;" type="file"  (change)="img_change(skui)" [id]="'File'+skui" class="form-control" value="{{sku_item.SKU_Image}}" placeholder="Enter Product Image Url">
+                         </div>
+                    </div>
+                    <div class="col-sm-3 sidegapp_none">
+                        <div class="attr_selection">
+                            <ul>
+                               <li *ngFor="let item of attributes; let ai = index">
+                                  <select (change)="sku_change(skui)" [attr.id]="'sku_attr'+skui+'_'+ai">
+                                  <option>Select {{item.name}}</option>
+                                  <option *ngFor="let val of item.values; let vi = index" value="{{val}}">{{val}}</option>
+                                  </select>
+                               </li>
+                            </ul>
+                         </div>
+                    </div>
+                    
+                    <div class="col-sm-1 sidegapp_none" *ngIf="skui == 0">
+                        <div class="form-group add_btn_middle">
+                             <i class="fa fa-plus add_icon" (click)="addSKU()"></i>
+                         </div>
+                    </div>
+                    <div class="col-sm-1 sidegapp_none" *ngIf="skui > 0">
+                        <div class="form-group add_btn_middle" (click)="removeCat(skui)">
+                             <i class="fa fa-times add_icon" ></i>
+                         </div>
+                    </div>
+                    <div class="col-sm-2 sidegapp_none">
+                        <div class="form-group d-none">
+                            <label [attr.for]="'SKU_Quantity'+skui"> SKU Image</label>
+                            <input type="text"  (keyup)="sku_change(skui)" [id]="'SKU_Image'+skui" class="form-control" value="{{sku_item.SKU_Image}}" placeholder="Enter Product Image Url">
+                         </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label [attr.for]="'SKU_Cost'+i">Product SKU Cost</label>
-                    <input type="number" [id]="'SKU_Cost'+i" class="form-control" formControlName="SKU_Cost" placeholder="Enter Product SKU Cost">
-                </div>
-                <div class="form-group">
-                    <label [attr.for]="'SKU_Price'+i">Product SKU Price</label>
-                    <input type="number" [id]="'SKU_Price'+i" class="form-control" formControlName="SKU_Price" placeholder="Enter Product SKU Price">
-                </div>
-                <div class="form-group">
-                    <label [attr.for]="'SKU_Quantity'+i">Product SKU Quantity</label>
-                    <input type="number" [id]="'SKU_Quantity'+i" class="form-control" formControlName="SKU_Quantity" placeholder="Enter Product SKU Quantity">
-                </div>
 
-            </div>
-        </div>
+               
+                
+              <div >
+         
+         
+          </div>
+          <div>
+      </div>
+   </div>
+   <div class="borderbtn">
+      <button class="btn btn-lg btn-primary btn-block" (click)="tryAddProduct()">Save</button>
+   </div>
 
-        <div class="borderbtn">
-            <button class="btn btn-lg btn-primary btn-block" (click)="tryAddProduct(addProductForm.value)">Save</button>
-        </div>
-
-    </form>
+    </div>
 </div>

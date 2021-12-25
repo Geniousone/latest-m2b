@@ -16,13 +16,15 @@ export class HeaderComponent implements OnInit {
 
   @Input() previousAction: String;
   @Input() previousLink: string;
-
+  userId : any;
   show = false;
   cartCheck = false;
   adminShow = false;
   LSRole: string;
   isOrder = false;
   tot : any;
+  show_cart : any;
+  cart: any;
   @Input() menuvisible: boolean = true;
   @Output() menuvisibleChange = new EventEmitter<boolean>();
   message = false;
@@ -33,9 +35,11 @@ export class HeaderComponent implements OnInit {
     private location: Location,
     private db: AngularFireDatabase
     ) {
+    this.userId = localStorage.getItem('login');
     this.tot = 0;
     let list = this.db.list('/cart');
     let t = 0;
+    let cart_local = [];
     list.snapshotChanges().pipe(
       map(changes =>
         changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
@@ -46,10 +50,13 @@ export class HeaderComponent implements OnInit {
       cart.forEach((currentValue, index) => {
         if( currentValue['uid'] && currentValue['uid'] == luid)
         { 
+          cart_local.push(currentValue);
           this.tot = this.tot+ 1;
         }
         });
     });
+
+    this.cart = cart_local;
     console.log("count="+this.tot);
   }
 
@@ -60,7 +67,7 @@ export class HeaderComponent implements OnInit {
 
   }
 
-  cart() {
+  cart_fun() {
     if (this.currentAction == "Cart") {
       this.router.navigateByUrl(this.currentLink)
     }

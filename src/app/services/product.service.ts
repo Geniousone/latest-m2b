@@ -45,29 +45,44 @@ export class ProductService {
 
     return text;
   }
+  uploadImg(id,folder = '', did = ''){
+
+    let rurl = '';
 
 
-  createProduct(product: ProductModel): void {
-
-
-    for (let selectedFile of [(<HTMLInputElement>document.getElementById('image')).files[0]]) {
+    for (let selectedFile of [(<HTMLInputElement>document.getElementById(id)).files[0]]) {
+      console.log("comming");
       this.nameFile = `${this.makeid()}${selectedFile.name}`
-      let path = `/${this.folder}/${this.nameFile}`;
+      let path = `/${folder}/${this.nameFile}`;
       let iRef = this.storageRef.child(path);
       iRef.put(selectedFile, this.metadata).then((snapshot) => {
-        product.product_image_url = this.nameFile;
+        // alert(this.nameFile);
+        // product.product_image_url = this.nameFile;
         this.storageRef.child(path).getDownloadURL().then((url) => {
           //Set Image URL
+          // alert(url);
+          if(did)
+            {
+              //did
+              (<HTMLInputElement>document.getElementById(did)).value = url;
+              // alert(url);
+          }
+          rurl = url;
 
-          product.path = url;
-
-          return this.productsRef.push(product);
+          // return this.productsRef.push(product);
         }).catch((error) => {
           console.log(error);
         })
           ;
       });
     }
+    return rurl;
+  }
+
+
+  createProduct(product) {
+
+    return this.productsRef.push(product);
   }
 
 

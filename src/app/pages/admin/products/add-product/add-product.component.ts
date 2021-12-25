@@ -8,7 +8,7 @@ import { CategoryService } from '../../../../services/category.service';
 import { map } from 'rxjs/operators';
 import { SupplierService } from '../../../../services/supplier.service';
 import { AuthService } from '../../../../authentication/core/auth.service';
-
+import { AngularFireDatabase, AngularFireList, AngularFireObject } from 'angularfire2/database';
 
 @Component({
   selector: 'app-add-product',
@@ -17,7 +17,7 @@ import { AuthService } from '../../../../authentication/core/auth.service';
 })
 export class AddProductComponent implements OnInit {
 
-
+  tab : any;
 
   checkChild = "email";
   categories: any;
@@ -32,16 +32,71 @@ export class AddProductComponent implements OnInit {
   status = [
     { name: "Enable", value: "Enable" },
     { name: "Disable", value: "Disable" }
-  ]
+  ];
+  brand :any;
+  brand_change(){
+    this.brand = (<HTMLInputElement>document.getElementById('brand')).value;
+  }
+  parent : any;
+  change_cat(){
+    this.parent = (<HTMLInputElement>document.getElementById('parent')).value;
+  }
+  get_skuAttribute(i)
+  {
+    var att = new Object();
+
+
+    for(let ii = 0;ii < this.attributes.length ; ii++)
+    {
+      // alert('sku_attr'+i+'_'+ii);
+      if((<HTMLInputElement>document.getElementById('sku_attr'+i+'_'+ii)).value)
+      {
+      let name = this.attributes[ii].name;
+        att[name]  = (<HTMLInputElement>document.getElementById('sku_attr'+i+'_'+ii)).value
+      }
+    }
+    console.log(att);
+    return att;
+
+    
+
+  }
+
+  sku_change(i)
+  {
+    this.get_skuAttribute(i); 
+    console.log(this.sku[i]);
+    this.sku[i].SKU_Name = (<HTMLInputElement>document.getElementById('SKU_Name'+i)).value;
+    this.sku[i].SKU_Price = (<HTMLInputElement>document.getElementById('SKU_Price'+i)).value;
+    this.sku[i].SKU_Quantity = (<HTMLInputElement>document.getElementById('SKU_Quantity'+i)).value;
+    this.sku[i].SKU_Image = (<HTMLInputElement>document.getElementById('SKU_Image'+i)).value;
+    this.sku[i].attributes = this.get_skuAttribute(i);
+    console.log(this.sku[i]);
+
+  }
   constructor(
     private actroute: ActivatedRoute,
     private productSer: ProductService,
     private router: Router,
+    private db: AngularFireDatabase,
     private fb: FormBuilder,
     private categoryService: CategoryService,
     private authService: AuthService,
     private supplierService: SupplierService) {
-
+    this.brand = 0;
+    this.parent = 0;
+  this.attributes = [];
+  this.sku = [];
+  this.tab = 'tab-1';
+  this.ngOnInit();
+  let sk = {
+  'SKU_Name' : '',
+  'SKU_Price' : '',
+  'SKU_Quantity' : '',
+  'attributes' : [],
+  'SKU_Image' : '',
+  };
+  this.sku.push(sk);
 
 
     this.createForm();
@@ -70,18 +125,52 @@ export class AddProductComponent implements OnInit {
       SKU_Cost: [0, Validators.required]
     })
   }
+  //categories : any;
+  brands : any;
   ngOnInit() {
+    this.tab = 'tab-1';
+       let list = this.db.list('/categories');
+    list.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+      )
+    ).subscribe(categories => {
+      this.categories = categories;
+      console.log('categories');
+      console.log(this.categories);
+      
+
+    });
+    list = this.db.list('/brands');
+    list.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+      )
+    ).subscribe(brands => {
+      this.brands = brands;
+      console.log('brands');
+      console.log(this.brands);
+
+    });
     this.ownEmail = JSON.parse(localStorage.getItem("user")).email;
     this.getUserOption();
     this.getCategoriesList();
     this.getUsersList();
   }
   removeCat(index) {
-    (<FormArray>this.addProductForm.get('productSKU')).removeAt(index)
+    this.sku[index] = '';
+    delete this.sku[index];
   }
   addSKU() {
 
-    (<FormArray>this.addProductForm.get('productSKU')).push(this.addProductSKU());
+    let sk = {
+  'SKU_Name' : '',
+  'SKU_Price' : '',
+  'SKU_Quantity' : '',
+  'attributes' : [],
+  'SKU_Image' : '',
+  };
+  this.sku.push(sk);
 
   }
   makeid() {
@@ -131,34 +220,66 @@ export class AddProductComponent implements OnInit {
     });
 
   }
+   attributes : any;
+   del_attr(i)
+   {
+     this.attributes[i] = '';
+   }
+   dval(i,vi)
+   {
+    let val = this.attributes[i].values;   
+    delete val[vi];
 
-  tryAddProduct(value) {
-    console.log(value);
-    this.product.product_name = value.name;
-    this.product.product_image_url = value.product_image_url;
-    this.product.status = value.status;
-    this.product.color = value.color;
-    this.product.cat_id = value.catId;   //Category id
-    this.product.col_name1 = value.col_name1;
-    this.product.col_name2 = value.col_name2;
-    value.productSKU.forEach(SKU => {
-      SKU['SKU_sold_qty'] = SKU.SKU_Quantity;
-    });
-    this.product.productSKU = value.productSKU;
-    if (this.isSupplierProduct) {
-      console.log(this.supplierId);
-      this.product.supplierEmail = value.userEmail;
-      console.log("Not supplier");
-    } else if (!this.isSupplierProduct) {
-      console.log("a supplier");
-      this.product.supplierEmail = this.user.email;
-      console.log(this.user.key);
-    }
-    this.product.addOn = Date.now();
-    this.product.id = this.makeid();
-    console.log(this.makeid())
-    console.log(this.product)
-    this.productSer.createProduct(this.product);
+    this.attributes[i].values = val;
+  }
+  add_attr(){
+    let n = {
+    'name': (<HTMLInputElement>document.getElementById('attr_name')).value,
+    'values' : [],
+    'cval' :'',
+    }; 
+    this.attributes.push(n);
+    (<HTMLInputElement>document.getElementById('attr_name')).value = '';
+    console.log(this.attributes);
+  }
+  ch_an(i)
+  {
+    let name = (<HTMLInputElement>document.getElementById('att__name'+i)).value;
+    console.log(name);
+    this.attributes[i].name = name;
+   //att__name' 
+  }
+  add_val(i)
+  {
+    let val = (<HTMLInputElement>document.getElementById('att__val'+i)).value;
+    console.log(this.attributes[i].values);
+    (<HTMLInputElement>document.getElementById('att__val'+i)).value = '';
+    this.attributes[i].values.push(val);
+  }
+  sku : any;
+  value_change(i, ai)
+  {
+    console.log('att__val' + i+'_'+ai);
+    console.log((<HTMLInputElement>document.getElementById('att__val' + i+'_'+ai)).value);
+    console.log(this.attributes[i].values[ai]);
+    this.attributes[i].values[ai] = (<HTMLInputElement>document.getElementById('att__val' + i+'_'+ai)).value;
+    console.log(this.attributes[i].values[ai]);
+  }
+  img_change(i)
+  {
+    let mid = 'File'+i;
+    let did = 'SKU_Image'+i;
+    let path = this.productSer.uploadImg(mid, 'products',did);
+  }
+  tryAddProduct() {
+    let product = {
+    "cat_id" : (<HTMLInputElement>document.getElementById('cat_id')).value,
+    "product_name" : (<HTMLInputElement>document.getElementById('product_name')).value,
+    "main_sku" : (<HTMLInputElement>document.getElementById('main_sku')).value,
+    "attributes" : this.attributes,
+    "productSKU" : this.sku
+  };
+    this.productSer.createProduct(product);
     this.router.navigate(['/admin/categories/products']);
     console.log(" cat iD " + this.product.cat_id);
     console.log(" user Email " + this.product.supplierEmail);

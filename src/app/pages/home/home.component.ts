@@ -211,6 +211,7 @@ if(this.ccurcolor == 2)
           currentValue['qty'] = 0;
           currentValue['price'] = 0;
           currentValue['min'] = this.set_low(index);
+          currentValue['path'] = this.set_img(index);
           currentValue['selectedAttr'] = 0;
           this.products[index]['cat_count'] = this.cart_tot(currentValue['key']);
           this.products[index] = currentValue;
@@ -305,9 +306,27 @@ if(this.ccurcolor == 2)
         {
           min = currentValue['SKU_Price'];
         }
-      if(currentValue['SKU_Price'] && min <= currentValue['SKU_Price']  && currentValue['SKU_Quantity'])
+      if(currentValue['SKU_Price'] && currentValue['SKU_Price'] <= min  && currentValue['SKU_Quantity'])
       {
         min = currentValue['SKU_Price'];
+      }
+    });
+    } 
+    return min;
+  }
+  set_img(n)
+  {
+    let min = '';
+    if(this.products[n]['productSKU'])
+    {
+      this.products[n]['productSKU'].forEach((currentValue, index) => {
+        if(index == 0)
+        {
+          min = currentValue['SKU_Image'];
+        }
+      if(currentValue['SKU_Price'] && min <= currentValue['SKU_Price']  && currentValue['SKU_Quantity'])
+      {
+        min = currentValue['SKU_Image'];
       }
     });
     } 
@@ -388,7 +407,7 @@ ar.push(_temp);
          console.log(msku);
     console.log(mlocal);
 
-         if(this.comparaattr(msku, mlocal,1))
+         if(this.comparaattr(msku, mlocal))
          {
           exist =  1;
           // this.products[pi].sku = currentValue; 
@@ -465,12 +484,15 @@ ar.push(_temp);
         if(currentValue.attributes)
         {
            msku = this.skutoattr(currentValue);
-           // console.log('start'); 
-           // console.log(this.comparaattr(msku, mlocal)); 
+           console.log('start'); 
+           console.log(this.comparaattr(msku, mlocal)); 
 
-           if(this.comparaattr(currentValue.attributes, mlocal))
+           if(this.comparaattr(currentValue.attributes, mlocal,1))
            {
+            console.log("Match here");
             this.products[pi].price = currentValue.SKU_Price; 
+            this.products[pi].path = currentValue.SKU_Image; 
+            console.log(this.products[pi].path);
             this.products[pi].qty = 1;
             this.products[pi].sku = currentValue;
            }
@@ -636,11 +658,7 @@ objtokey(obj)
 }
 objtoval(obj)
 {
-  for(var obj1 in obj)
-  {
-    return obj[obj1];
-    
-  }
+  return obj;
   
 }
 comparaattr(arr1,arr2,type = 0)
@@ -660,8 +678,13 @@ comparaattr(arr1,arr2,type = 0)
     var val = this.objtoval(arr1[obj1]);
     if(val.val)
       val = val.val;
+    if(type)
+    {
+      console.log(obj1+" == "+obj2);
+      console.log(val+" == "+arr2[obj2]);
+    }
     
-        if(key == obj2 && val != arr2[obj2] && r)
+        if(obj1 == obj2 && val != arr2[obj2] && r)
         {
           r = false;
 

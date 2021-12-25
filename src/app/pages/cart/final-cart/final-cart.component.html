@@ -709,7 +709,7 @@
       <div class="col-sm-4 billing_address">
         <div class="inner_box">
           <h4 class="shipping_box" (click)="show_accor('acc2')"><span>2.</span> SHIPPING METHOD <i class="fa fa-angle-down"></i></h4>
-            <div  *ngIf="acord.acc2 == 1" style="display:block;">
+            <div class="ship_sidegapp"  *ngIf="acord.acc2 == 1" style="display:block;">
               <p>We've noticed that customers in your country have been asked by customer to pay improt or taxes when ordering from delivery and selecting express shipping</p>
             <p>Please consider this when selecting your shipping options</p>
             <div class="ship_address radio_box" *ngFor="let item of shipping_methods;let i = index;">
@@ -734,7 +734,7 @@
             <span style="color:red;">{{cerror}}</span>
             <button *ngIf="credit > 0 && !credit_pay" (click)="applyCredit();">Apply Credit</button>
           </div>
-          <div id="odiv" *ngIf="pmethod == 'ccard'">
+          <div id="odiv" *ngIf="pmethod == 'ccard'" class="card_error_page">
           <form id="card_form">
             <ul id="card_error">
               {{card_error}}
@@ -830,6 +830,11 @@
   </div>
 </div>
 </div>
+
+<div class="marque_text">
+  <p>all trademarks are properties of their respective holders. M2BWholesale does not own or make claims to those trademarks use on this website</p>
+</div>
+
 <div class="subtotal" id="carttotal" (click)="checkout()">
   <h3><img src="assets/assets1/images/logo.png" alt=""> <a> Pay with M2B </a></h3>
   <span *ngIf="tot">${{tot | number : '1.2-2'}}</span>

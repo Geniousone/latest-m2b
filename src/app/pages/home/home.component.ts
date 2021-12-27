@@ -42,11 +42,13 @@ export class HomeComponent implements OnInit {
     // console.log(); 
      
     let tot = 0;
+
     this.cart.forEach((currentValue, index) => {
         if( currentValue['pid'] && currentValue['pid'] == p && currentValue['uid'] && currentValue['uid'] == this.userId)
         { 
           console.log(p);
-          tot = tot+  currentValue['qty'];
+           tot = tot+  currentValue['qty'];
+          // tot = tot+  1;
         }
         });
     if(index != -1)
@@ -138,12 +140,13 @@ if(this.ccurcolor == 2)
     ).subscribe(cart => {
       let luid  = localStorage.getItem('login');
       this.tot = 0;
+      this.cart_count = 0;
       cart.forEach((currentValue, index) => {
         if( currentValue['uid'] && currentValue['uid'] == luid)
         { 
           if(currentValue['sku'] && currentValue['qty'])
-          this.tot = this.tot+ (currentValue['sku'].SKU_Price * currentValue['qty']);
-        this.cart_count = this.cart_count +1;
+          this.tot = this.tot + (currentValue['sku'].SKU_Price * currentValue['qty']);
+          this.cart_count = this.cart_count +1;
         }
         });
     });
@@ -159,6 +162,18 @@ if(this.ccurcolor == 2)
     private toastrService: ToastrService,
   ) { 
      this.varImg = 0;
+     list = this.db.list('/brands');
+    list.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+      )
+    ).subscribe(brands => {
+      this.brands = brands;
+      alert(2);
+      console.log('brands');
+      console.log(this.brands);
+
+    });
     
     this.selectedCat = 0;
     let list = this.db.list('/categories');
@@ -183,18 +198,7 @@ if(this.ccurcolor == 2)
       console.log(this.cart);
 
     });
-    //brands
-    list = this.db.list('/brands');
-    list.snapshotChanges().pipe(
-      map(changes =>
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    ).subscribe(brands => {
-      this.brands = brands;
-      console.log('brands');
-      console.log(this.brands);
 
-    });
     this.cart = [] ;
     list = this.db.list('/products');
     list.snapshotChanges().pipe(
@@ -476,11 +480,15 @@ ar.push(_temp);
     });
 
    console.log(mlocal);
+   console.log(this.products[pi].productSKU);
 
   if(this.products[pi].productSKU)
   {
+
     this.products[pi].productSKU.forEach((currentValue, index) => {
         let msku = [];
+        console.log("482");
+        console.log(currentValue);
         if(currentValue.attributes)
         {
            msku = this.skutoattr(currentValue);
@@ -612,6 +620,7 @@ addcart(p)
           this.products[index] = currentValue;
           this.oproducts[index] = currentValue;
           currentValue['min'] = this.set_low(index);
+          currentValue['path'] = this.set_img(index);
         });
 
     });
@@ -674,6 +683,7 @@ comparaattr(arr1,arr2,type = 0)
       //inner loop
       for(var obj2 in arr2)
       {
+
         var key = this.objtokey(arr1[obj1]);
     var val = this.objtoval(arr1[obj1]);
     if(val.val)
@@ -697,6 +707,20 @@ comparaattr(arr1,arr2,type = 0)
 }
 
   ngOnInit() {
+     //brands
+    alert(1);
+    list = this.db.list('/brands');
+    list.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+      )
+    ).subscribe(brands => {
+      this.brands = brands;
+      alert(2);
+      console.log('brands');
+      console.log(this.brands);
+
+    });
     this.userId = localStorage.getItem('login');
     // alert(this.userId);
 

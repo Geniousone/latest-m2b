@@ -258,7 +258,7 @@ const t  = dd + '/' + mm + '/' + yyyy;
            console.log(r);
      }
     if (this.smethod) {
-      alert(this.smethod);
+      // alert(this.smethod);
       order['shipping'] = this.shipping_methods[this.smethod];
     }
     if (this.pmethod) {
@@ -446,6 +446,7 @@ const t  = dd + '/' + mm + '/' + yyyy;
         return this.http.get('https://m2b.foxaf.com/su.php?token='+(<HTMLInputElement>document.getElementById('card-nonce')).value+'&amount='+amount);
     }
     ngOnInit() {
+        this.credit_pay = 0;
         this.card_error = '';
         this.orderList = JSON.parse(localStorage.getItem('orderData'));
         this.calculateTotal();

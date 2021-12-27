@@ -193,7 +193,6 @@ export class LoginComponent implements OnInit {
         });
 
       }, err => {
-        alert("error");
         console.log(err);
         this.errorMessage = err.message;
       });

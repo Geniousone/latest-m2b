@@ -39,15 +39,16 @@ export class ProductService {
   makeid() {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
     for (var i = 0; i < 5; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;
   }
-  uploadImg(id,folder = '', did = ''){
+  uploadImg(id,folder = '', did = '',img = ''){
 
     let rurl = '';
+    alert(id);
+    alert((<HTMLInputElement>document.getElementById(id)));
 
 
     for (let selectedFile of [(<HTMLInputElement>document.getElementById(id)).files[0]]) {
@@ -57,7 +58,7 @@ export class ProductService {
       let iRef = this.storageRef.child(path);
       iRef.put(selectedFile, this.metadata).then((snapshot) => {
         // alert(this.nameFile);
-        // product.product_image_url = this.nameFile;
+        // product.product_image_url g1= this.nameFile;
         this.storageRef.child(path).getDownloadURL().then((url) => {
           //Set Image URL
           // alert(url);
@@ -65,6 +66,8 @@ export class ProductService {
             {
               //did
               (<HTMLInputElement>document.getElementById(did)).value = url;
+              localStorage.setItem(img,url);
+              (<HTMLInputElement>document.getElementById(img)).src = url;
               // alert(url);
           }
           rurl = url;
@@ -105,44 +108,9 @@ export class ProductService {
     this.productRef = this.db.object(itemPath);
     return this.productRef;
   }
-  updateProduct(key: string, value: any, oldName: string): void {
-    if (value.product_image_url == oldName) {
-      this.productsRef.update(key, value).catch(error => this.handleError(error));
-
-    } else {
-      this.GetProduct(key).valueChanges().subscribe(data => {
-        this.storageRef.child(`${this.folder}/${oldName}`).delete().catch(error => this.handleError(error)).then(d => {
-
-        })
-
-      })
-      // 
-      console.log((<HTMLInputElement>document.getElementById('img')).files[0])
-      for (let selectedFile of [(<HTMLInputElement>document.getElementById('img')).files[0]]) {
-        this.nameFile = `${this.makeid()}${selectedFile.name}`
-        let path = `/${this.folder}/${this.nameFile}`;
-        let iRef = this.storageRef.child(path);
-        iRef.put(selectedFile, this.metadata).then((snapshot) => {
-          value.product_image_url = this.nameFile;
-          this.storageRef.child(path).getDownloadURL().then((url) => {
-            //Set Image URL
-
-            value.path = url;
-
-            return this.productsRef.update(key, value).catch(error => this.handleError(error));
-          }).catch((error) => {
-            console.log(error);
-          })
-            ;
-        });
-      }
-
-    }
-
-
-
-
-  }
+  updateProduct(key: string, value: any, oldName: string) {
+  return this.productsRef.update(key,value);
+}
 
   deleteProduct(key: string): void {
 

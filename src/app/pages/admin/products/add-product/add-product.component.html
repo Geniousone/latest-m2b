@@ -122,39 +122,45 @@
    
    <div class="add_cat" *ngFor="let sku_item of sku; let skui=index ">
     <div class="row" *ngIf="sku_item">
+                    <div>
+                        {{load_attr(skui)}}
+                        <img [src]="sku_item.SKU_Image" class="sku_img" *ngIf="sku_item.SKU_Image"/>
+                        
+                        
+                    </div>
             
                     <div class="col-sm-2 sidegapp_none">
                         <div class="form-group">
                             <label [attr.for]="'SKU_Name'+skui">SKU Name</label>
-                            <input type="text" [id]="'SKU_Name'+skui" value="{{sku_item.SKU_Name}}" (keyup)="sku_change(skui)" class="form-control" placeholder="Enter Product SKU Name">
+                            <input type="text" [id]="'SKU_Name'+skui" [(ngModel)]="sku_item.SKU_Name" (keyup)="sku_change(skui)" class="form-control" placeholder="Enter Product SKU Name">
                          </div>
                     </div>
                     <div class="col-sm-2 sidegapp_none">
                         <div class="form-group">
                             <label [attr.for]="'SKU_Price'+skui">SKU Price</label>
-                            <input type="number" [id]="'SKU_Price'+skui" class="form-control" (keyup)="sku_change(skui)" value="{{sku_item.SKU_Price}}" placeholder="Enter Product SKU Price">
+                            <input type="number" [id]="'SKU_Price'+skui" class="form-control" (keyup)="sku_change(skui)" [(ngModel)]="sku_item.SKU_Price" placeholder="Enter Product SKU Price">
                          </div>
                     </div>
                     <div class="col-sm-2 sidegapp_none">
                         <div class="form-group">
                             <label [attr.for]="'SKU_Quantity'+skui">SKU Quantity</label>
-                            <input type="number"  (keyup)="sku_change(skui)" [id]="'SKU_Quantity'+skui" class="form-control" value="{{sku_item.SKU_Quantity}}" placeholder="Enter Product SKU Quantity">
+                            <input type="number"  (keyup)="sku_change(skui)" [id]="'SKU_Quantity'+skui" class="form-control" [(ngModel)]="sku_item.SKU_Quantity" placeholder="Enter Product SKU Quantity">
                          </div>
                     </div>
                     
                     <div class="col-sm-2 sidegapp_none">
                         <div class="form-group">
-                            <label [attr.for]="'File'+skui">SKU Image</label>
-                            <input type="hidden" [id]="'SKU_Image'+skui" (keyup)="sku_change(skui)" name="">
-                            <input style="padding: 5px 7px 0;" type="file"  (change)="img_change(skui)" [id]="'File'+skui" class="form-control" value="{{sku_item.SKU_Image}}" placeholder="Enter Product Image Url">
+                            <label>SKU Image</label>
+                            <input type="text" [(ngModel)]="sku_item.SKU_Image" [id]="'SKU_Image'+skui" (keyup)="sku_change(skui)" name=""/>
+                            <input style="padding: 5px 7px 0;" type="file"  (change)="fileChangeEvent($event,skui)" class="form-control here" placeholder="Enter Product Image Url">
                          </div>
                     </div>
                     <div class="col-sm-3 sidegapp_none">
                         <div class="attr_selection">
                             <ul>
                                <li *ngFor="let item of attributes; let ai = index">
-                                  <select (change)="sku_change(skui)" [attr.id]="'sku_attr'+skui+'_'+ai">
-                                  <option>Select {{item.name}}</option>
+                                  <select [(ngModel)]="sku_item.attributes[item.name]" (change)="sku_change(skui)" value="" [attr.id]="'sku_attr'+skui+'_'+ai">
+                                  <option value="0">Select {{item.name}}</option>
                                   <option *ngFor="let val of item.values; let vi = index" value="{{val}}">{{val}}</option>
                                   </select>
                                </li>
@@ -170,12 +176,6 @@
                     <div class="col-sm-1 sidegapp_none" *ngIf="skui > 0">
                         <div class="form-group add_btn_middle" (click)="removeCat(skui)">
                              <i class="fa fa-times add_icon" ></i>
-                         </div>
-                    </div>
-                    <div class="col-sm-2 sidegapp_none">
-                        <div class="form-group d-none">
-                            <label [attr.for]="'SKU_Quantity'+skui"> SKU Image</label>
-                            <input type="text"  (keyup)="sku_change(skui)" [id]="'SKU_Image'+skui" class="form-control" value="{{sku_item.SKU_Image}}" placeholder="Enter Product Image Url">
                          </div>
                     </div>
                 </div>
